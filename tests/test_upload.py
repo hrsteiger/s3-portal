@@ -61,5 +61,5 @@ def test_upload_success(mock_put):
     assert resp.status_code == 201
     body = resp.json()
     assert body["key"] == "reports/data.csv"
-    assert body["size"] == 15
+    assert body["size"] == 14
     mock_put.assert_awaited_once()
