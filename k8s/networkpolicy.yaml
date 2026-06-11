@@ -1,0 +1,35 @@
+# Restrict inbound traffic to s3-portal.
+#
+# Rule 1 — human users: allow ingress from the ingress controller only (port 8000).
+# Rule 2 — in-cluster uploads: allow ingress from pods labelled
+#           app.kubernetes.io/component=uploader (port 8000).
+#
+# All other inbound connections are dropped at the network layer, so a
+# leaked API key cannot be used from outside the cluster.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: s3-portal-ingress
+  namespace: default          # change to match your deployment namespace
+spec:
+  podSelector:
+    matchLabels:
+      app: s3-portal
+  policyTypes:
+    - Ingress
+  ingress:
+    # Traffic from the ingress controller (adjust labelSelector to match yours)
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ingress-nginx
+      ports:
+        - port: 8000
+
+    # Traffic from authorised in-cluster uploaders
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: uploader
+      ports:
+        - port: 8000

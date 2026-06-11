@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>S3 Portal</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; margin: 0; background: #f5f5f5; color: #222; }
+    header { background: #1a1a2e; color: #fff; padding: 1rem 2rem;
+             display: flex; justify-content: space-between; align-items: center; }
+    header h1 { margin: 0; font-size: 1.25rem; }
+    header a { color: #aaa; font-size: 0.875rem; text-decoration: none; }
+    header a:hover { color: #fff; }
+    main { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    table { width: 100%; border-collapse: collapse; background: #fff;
+            border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+    th, td { padding: .75rem 1rem; text-align: left; border-bottom: 1px solid #eee; }
+    th { background: #f0f0f0; font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #fafafa; }
+    a.download { color: #0066cc; text-decoration: none; font-weight: 500; }
+    a.download:hover { text-decoration: underline; }
+    .empty { text-align: center; padding: 3rem; color: #888; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>S3 Portal</h1>
+  <span>{{ user.name }} &nbsp;|&nbsp; <a href="/logout">Logout</a></span>
+</header>
+<main>
+  <h2>Files in bucket</h2>
+  {% if objects %}
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Size</th><th>Last modified</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for obj in objects %}
+      <tr>
+        <td>{{ obj.key }}</td>
+        <td>{{ (obj.size / 1024) | round(1) }} KB</td>
+        <td>{{ obj.last_modified }}</td>
+        <td><a class="download" href="/download/{{ obj.key }}">Download</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">No files found in the bucket.</p>
+  {% endif %}
+</main>
+</body>
+</html>
