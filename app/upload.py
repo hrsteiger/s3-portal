@@ -21,6 +21,7 @@ import aioboto3
 from botocore.exceptions import ClientError
 from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
 
+from .audit import log_upload
 from .config import Settings, get_settings
 
 router = APIRouter(prefix="/upload", tags=["upload"])
@@ -95,4 +96,5 @@ async def upload_file(
         or "application/octet-stream"
     )
     await _put_object(key, body, content_type, settings)
+    log_upload(request, key, len(body))
     return {"key": key, "bucket": settings.s3_bucket, "size": len(body)}
